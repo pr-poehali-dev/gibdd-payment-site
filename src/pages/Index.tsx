@@ -9,8 +9,40 @@ import Icon from '@/components/ui/icon';
 const Index = () => {
   const [driversLicense, setDriversLicense] = useState('');
   const [vehicleRegistration, setVehicleRegistration] = useState('');
-  const handlePayment = () => {
-    window.location.href = 'https://pay.example.com';
+  const [isLoading, setIsLoading] = useState(false);
+  const [amount, setAmount] = useState('500');
+
+  const handlePayment = async () => {
+    if (!driversLicense || !vehicleRegistration) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/cc8fc610-0f41-4cd5-abbb-fbba31d2f722', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: parseFloat(amount),
+          drivers_license: driversLicense,
+          vehicle_registration: vehicleRegistration,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        alert('Ошибка создания платежа');
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Ошибка соединения с сервером');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,13 +107,32 @@ const Index = () => {
                   className="text-base"
                 />
               </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Сумма к оплате (₽)</label>
+                <Input
+                  type="number"
+                  placeholder="500"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="text-base"
+                />
+              </div>
               <Button 
                 onClick={handlePayment} 
                 className="w-full h-12 text-base font-medium"
-                disabled={!driversLicense || !vehicleRegistration}
+                disabled={!driversLicense || !vehicleRegistration || isLoading}
               >
-                <Icon name="CreditCard" className="mr-2" size={20} />
-                Перейти к оплате
+                {isLoading ? (
+                  <>
+                    <Icon name="Loader2" className="animate-spin mr-2" size={20} />
+                    Создание платежа...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="CreditCard" className="mr-2" size={20} />
+                    Перейти к оплате
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>

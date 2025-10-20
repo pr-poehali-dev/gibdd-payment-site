@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Generate payment link",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "amount": 500,
+        "order_id": "test123",
+        "email": "test@example.com",
+        "drivers_license": "1234567890",
+        "vehicle_registration": "0987654321"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "payment_url": "string",
+        "order_id": "test123",
+        "amount": 500
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Handle OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}
