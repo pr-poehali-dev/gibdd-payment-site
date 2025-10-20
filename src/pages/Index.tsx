@@ -9,7 +9,13 @@ const Index = () => {
   const [driversLicense, setDriversLicense] = useState('');
   const [vehicleRegistration, setVehicleRegistration] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [amount, setAmount] = useState('500');
+  const [selectedPeriod, setSelectedPeriod] = useState<'6months' | '1year' | '2years'>('6months');
+  
+  const periods = {
+    '6months': { label: 'Пол года', amount: 80000 },
+    '1year': { label: 'Год', amount: 160000 },
+    '2years': { label: '2 года', amount: 250000 }
+  };
 
   const handlePayment = async () => {
     if (!driversLicense || !vehicleRegistration) return;
@@ -23,7 +29,7 @@ const Index = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: parseFloat(amount),
+          amount: periods[selectedPeriod].amount,
           drivers_license: driversLicense,
           vehicle_registration: vehicleRegistration,
         }),
@@ -106,15 +112,22 @@ const Index = () => {
                   className="text-base"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Сумма к оплате (₽)</label>
-                <Input
-                  type="number"
-                  placeholder="500"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="text-base"
-                />
+              <div className="space-y-3">
+                <label className="text-sm font-medium">Выберите период</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(Object.keys(periods) as Array<keyof typeof periods>).map((key) => (
+                    <Button
+                      key={key}
+                      type="button"
+                      variant={selectedPeriod === key ? 'default' : 'outline'}
+                      onClick={() => setSelectedPeriod(key)}
+                      className="flex flex-col h-auto py-4 px-2"
+                    >
+                      <span className="text-sm font-medium">{periods[key].label}</span>
+                      <span className="text-lg font-bold mt-1">{periods[key].amount.toLocaleString('ru-RU')} ₽</span>
+                    </Button>
+                  ))}
+                </div>
               </div>
               <Button 
                 onClick={handlePayment} 
