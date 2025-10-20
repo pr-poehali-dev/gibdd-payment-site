@@ -9,34 +9,8 @@ import Icon from '@/components/ui/icon';
 const Index = () => {
   const [driversLicense, setDriversLicense] = useState('');
   const [vehicleRegistration, setVehicleRegistration] = useState('');
-  const [isChecking, setIsChecking] = useState(false);
-  const [fines, setFines] = useState<any[]>([]);
-
-  const handleCheck = () => {
-    setIsChecking(true);
-    setTimeout(() => {
-      setFines([
-        {
-          id: '18810114231000001',
-          date: '15.10.2024',
-          article: 'ч.1 ст.12.9 КоАП',
-          description: 'Превышение скорости на 20 км/ч',
-          amount: 500,
-          discount: true,
-          location: 'М-11, 45 км'
-        },
-        {
-          id: '18810114231000002',
-          date: '02.10.2024',
-          article: 'ч.1 ст.12.12 КоАП',
-          description: 'Проезд на запрещающий сигнал светофора',
-          amount: 1000,
-          discount: true,
-          location: 'г. Москва, ул. Тверская'
-        }
-      ]);
-      setIsChecking(false);
-    }, 1500);
+  const handlePayment = () => {
+    window.location.href = 'https://pay.example.com';
   };
 
   return (
@@ -65,21 +39,21 @@ const Index = () => {
         <section className="mb-12 animate-fade-in">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Проверка штрафов ГИБДД
+              Оплата штрафов ГИБДД
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Введите данные для быстрой проверки неоплаченных штрафов
+              Введите данные для оплаты штрафов со скидкой 50%
             </p>
           </div>
 
           <Card className="max-w-2xl mx-auto shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Icon name="Search" size={24} />
-                Форма проверки
+                <Icon name="CreditCard" size={24} />
+                Форма оплаты
               </CardTitle>
               <CardDescription>
-                Проверка займет не более 10 секунд
+                Оплатите штрафы со скидкой 50% в течение 20 дней
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -102,85 +76,17 @@ const Index = () => {
                 />
               </div>
               <Button 
-                onClick={handleCheck} 
+                onClick={handlePayment} 
                 className="w-full h-12 text-base font-medium"
-                disabled={isChecking || !driversLicense || !vehicleRegistration}
+                disabled={!driversLicense || !vehicleRegistration}
               >
-                {isChecking ? (
-                  <>
-                    <Icon name="Loader2" className="animate-spin mr-2" size={20} />
-                    Проверяем...
-                  </>
-                ) : (
-                  <>
-                    <Icon name="Search" className="mr-2" size={20} />
-                    Проверить штрафы
-                  </>
-                )}
+                <Icon name="CreditCard" className="mr-2" size={20} />
+                Перейти к оплате
               </Button>
             </CardContent>
           </Card>
 
-          {fines.length > 0 && (
-            <div className="max-w-2xl mx-auto mt-8 space-y-4 animate-slide-up">
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold">Найдено штрафов: {fines.length}</h3>
-                <Badge variant="destructive" className="text-base px-3 py-1">
-                  Сумма: {fines.reduce((acc, fine) => acc + (fine.discount ? fine.amount / 2 : fine.amount), 0)} ₽
-                </Badge>
-              </div>
 
-              {fines.map((fine, index) => (
-                <Card key={fine.id} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <Icon name="AlertCircle" className="text-destructive" size={20} />
-                          {fine.description}
-                        </CardTitle>
-                        <CardDescription className="mt-1">
-                          {fine.article} • {fine.location}
-                        </CardDescription>
-                      </div>
-                      {fine.discount && (
-                        <Badge className="bg-green-500 hover:bg-green-600">
-                          -50%
-                        </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between flex-wrap gap-4">
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">Дата нарушения</p>
-                        <p className="font-medium">{fine.date}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">УИН</p>
-                        <p className="font-mono text-sm">{fine.id}</p>
-                      </div>
-                      <div className="space-y-1 text-right">
-                        <p className="text-sm text-muted-foreground">Сумма</p>
-                        <div className="flex items-center gap-2">
-                          {fine.discount && (
-                            <span className="line-through text-muted-foreground">{fine.amount} ₽</span>
-                          )}
-                          <span className="text-xl font-bold text-primary">
-                            {fine.discount ? fine.amount / 2 : fine.amount} ₽
-                          </span>
-                        </div>
-                      </div>
-                      <Button className="gap-2 h-10">
-                        <Icon name="CreditCard" size={18} />
-                        Оплатить
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
         </section>
 
         <section className="mb-12">
@@ -191,9 +97,9 @@ const Index = () => {
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
                   <Icon name="Zap" className="text-primary" size={24} />
                 </div>
-                <CardTitle>Быстрая проверка</CardTitle>
+                <CardTitle>Быстрая оплата</CardTitle>
                 <CardDescription>
-                  Проверка штрафов за 10 секунд. Данные напрямую из ГИС ГМП
+                  Оплата штрафов в несколько кликов. Без комиссии
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -283,13 +189,13 @@ const Index = () => {
             <CardContent className="py-8">
               <div className="text-center space-y-4">
                 <Icon name="Bell" size={48} className="mx-auto" />
-                <h3 className="text-2xl font-bold">Подключите уведомления</h3>
+                <h3 className="text-2xl font-bold">Оплатите прямо сейчас</h3>
                 <p className="text-primary-foreground/90 max-w-2xl mx-auto">
-                  Получайте мгновенные уведомления о новых штрафах и не пропускайте период скидки 50%
+                  Оплатите штрафы со скидкой 50% в течение 20 дней с момента нарушения
                 </p>
-                <Button variant="secondary" size="lg" className="gap-2 mt-4">
-                  <Icon name="Smartphone" size={20} />
-                  Подключить уведомления
+                <Button variant="secondary" size="lg" className="gap-2 mt-4" onClick={handlePayment}>
+                  <Icon name="CreditCard" size={20} />
+                  Оплатить штраф
                 </Button>
               </div>
             </CardContent>
