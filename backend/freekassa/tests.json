@@ -1,21 +1,19 @@
 {
   "tests": [
     {
-      "name": "Generate payment link",
+      "name": "Create payment link",
       "method": "POST",
       "path": "/",
       "body": {
-        "amount": 500,
-        "order_id": "test123",
-        "email": "test@example.com",
-        "drivers_license": "1234567890",
-        "vehicle_registration": "0987654321"
+        "amount": 80000,
+        "drivers_license": "99 99 999999",
+        "vehicle_registration": "99 99 999999"
       },
       "expectedStatus": 200,
       "expectedBody": {
         "payment_url": "string",
-        "order_id": "test123",
-        "amount": 500
+        "order_id": "string",
+        "amount": 80000
       },
       "bodyMatcher": "partial"
     },
